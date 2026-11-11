@@ -22,14 +22,18 @@ public enum OrganizationRole {
             Permission.FINANCE_READ,
             Permission.FINANCE_WRITE,
             Permission.INSIGHTS_READ,
-            Permission.AI_USE
+            Permission.AI_USE,
+            Permission.HR_SELF_SERVICE,
+            Permission.HR_READ,
+            Permission.HR_LEAVE_REVIEW
     )),
 
     EMPLOYEE(EnumSet.of(
             Permission.CRM_READ,
             Permission.CRM_WRITE,
             Permission.INVENTORY_READ,
-            Permission.INVENTORY_WRITE
+            Permission.INVENTORY_WRITE,
+            Permission.HR_SELF_SERVICE
     ));
 
     private final Set<Permission> permissions;

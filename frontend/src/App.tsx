@@ -7,11 +7,11 @@ import { AdministrationPage } from './pages/AdministrationPage';
 import { CrmPage } from './pages/CrmPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { FinancePage } from './pages/FinancePage';
+import { HrPage } from './pages/HrPage';
 import { InsightsPage } from './pages/InsightsPage';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { OperationsPage } from './pages/OperationsPage';
-import { PlannedModulePage } from './pages/PlannedModulePage';
 import { RegisterPage } from './pages/RegisterPage';
 
 function ProtectedShellRoutes() {
@@ -46,12 +46,14 @@ function ProtectedShellRoutes() {
                 <OperationsPage />
               ) : item.id === 'finance' ? (
                 <FinancePage />
+              ) : item.id === 'hr' ? (
+                <HrPage />
               ) : item.id === 'insights' ? (
                 <InsightsPage />
               ) : item.id === 'administration' ? (
                 <AdministrationPage />
               ) : (
-                <PlannedModulePage module={item} />
+                <NotFoundPage />
               )
             }
           />

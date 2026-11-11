@@ -34,8 +34,12 @@ function buildSession(role: UserRole): SessionInfo {
           'FINANCE_WRITE',
           'INSIGHTS_READ',
           'AI_USE',
+          'HR_SELF_SERVICE',
+          'HR_READ',
+          'HR_WRITE',
+          'HR_LEAVE_REVIEW',
         ]
-      : ['CRM_READ', 'CRM_WRITE', 'INVENTORY_READ', 'INVENTORY_WRITE'],
+      : ['CRM_READ', 'CRM_WRITE', 'INVENTORY_READ', 'INVENTORY_WRITE', 'HR_SELF_SERVICE'],
     organizations: [
       {
         id: 'org-1',
@@ -103,9 +107,9 @@ describe('AppShell authentication and role-aware visibility', () => {
     expect(within(nav).getByText('Dashboard')).toBeInTheDocument();
     expect(within(nav).getByText('CRM')).toBeInTheDocument();
     expect(within(nav).getByText('Operations')).toBeInTheDocument();
+    expect(within(nav).getByText('HR')).toBeInTheDocument();
 
     expect(within(nav).queryByText('Finance')).not.toBeInTheDocument();
-    expect(within(nav).queryByText('HR')).not.toBeInTheDocument();
     expect(within(nav).queryByText('Insights')).not.toBeInTheDocument();
     expect(within(nav).queryByText('Administration')).not.toBeInTheDocument();
   });
@@ -147,12 +151,16 @@ describe('AppShell authentication and role-aware visibility', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders the planned HR module without development phase labels', () => {
+  it('renders the active HR module without placeholder or development labels', () => {
     renderAuthenticatedShell('OWNER', ['/hr']);
-    expect(screen.getByRole('heading', { name: 'HR' })).toBeInTheDocument();
     expect(
-      screen.getByText('HR is planned for a future release'),
+      screen.getByRole('heading', { name: 'Human Resources' }),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/Prompt|Phase/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Overview' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Employees' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Departments' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Attendance' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Leave Management' })).toBeInTheDocument();
+    expect(screen.queryByText(/Prompt|Phase|Scope Pending PRD/i)).not.toBeInTheDocument();
   });
 });

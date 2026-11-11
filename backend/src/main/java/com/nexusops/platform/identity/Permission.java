@@ -14,6 +14,10 @@ public enum Permission {
     FINANCE_READ,
     FINANCE_WRITE,
     INSIGHTS_READ,
-    AI_USE
+    AI_USE,
+    HR_SELF_SERVICE,
+    HR_READ,
+    HR_WRITE,
+    HR_LEAVE_REVIEW
 }
 

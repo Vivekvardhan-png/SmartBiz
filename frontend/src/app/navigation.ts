@@ -80,10 +80,10 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     path: '/hr',
     group: 'Modules',
     icon: Briefcase,
-    allowedRoles: ['OWNER', 'ADMIN', 'MANAGER'],
-    statusLabel: 'Planned',
+    allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
+    statusLabel: 'Active',
     description:
-      'Human resources, employee directory, and workforce management (planned for a future release).',
+      'Employee directory, department management, daily attendance tracking, and leave workflows.',
   },
   {
     id: 'insights',
