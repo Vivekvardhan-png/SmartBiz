@@ -117,4 +117,15 @@ security:
 # Logging
 # - Log structured INFO in production; DEBUG in local.
 # - Never log passwords, tokens, or sensitive business data.
-# =======================================================
+# ============================================================
+logging:
+  level:
+    root: INFO
+    com.nexusops: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.flywaydb: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+

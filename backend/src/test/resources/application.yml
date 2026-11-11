@@ -23,6 +23,12 @@ spring:
 cors:
   allowed-origins: http://localhost:5173
 
+security:
+  jwt:
+    # Test-only ephemeral signing key (>= 32 bytes)
+    secret: "test-only-signing-secret-not-for-production-use-64-bytes-minimum!!"
+    expiration-seconds: 3600
+
 logging:
   level:
     com.nexusops: WARN
