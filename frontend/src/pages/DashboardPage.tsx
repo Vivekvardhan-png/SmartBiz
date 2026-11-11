@@ -244,7 +244,19 @@ export function DashboardPage() {
               <Card>
                 <CardHeader
                   title="Low-Stock Products"
-                  actions={<Badge variant="neutral">Prompt 04</Badge>}
+                  actions={
+                    <Badge
+                      variant={
+                        summary.lowStockProductsCount.moduleAvailable
+                          ? 'success'
+                          : 'neutral'
+                      }
+                    >
+                      {summary.lowStockProductsCount.moduleAvailable
+                        ? 'Live'
+                        : 'Prompt 04'}
+                    </Badge>
+                  }
                 />
                 <CardContent>
                   <div

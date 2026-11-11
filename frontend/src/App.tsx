@@ -10,6 +10,7 @@ import { DesignSystemPage } from './pages/DesignSystemPage';
 import { LoginPage } from './pages/LoginPage';
 import { ModuleFoundationPage } from './pages/ModuleFoundationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { OperationsPage } from './pages/OperationsPage';
 import { RegisterPage } from './pages/RegisterPage';
 
 function ProtectedShellRoutes() {
@@ -40,6 +41,8 @@ function ProtectedShellRoutes() {
                 <DashboardPage />
               ) : item.id === 'crm' ? (
                 <CrmPage />
+              ) : item.id === 'operations' ? (
+                <OperationsPage />
               ) : item.id === 'administration' ? (
                 <AdministrationPage />
               ) : (

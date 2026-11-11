@@ -298,7 +298,8 @@ class DashboardAndCrmIntegrationTest {
                 .andExpect(jsonPath("$.data.leadsByStage.NEW").value(1))
                 .andExpect(jsonPath("$.data.leadsByStage.LOST").value(1))
                 .andExpect(jsonPath("$.data.periodRevenue.moduleAvailable").value(false))
-                .andExpect(jsonPath("$.data.lowStockProductsCount.moduleAvailable").value(false));
+                .andExpect(jsonPath("$.data.lowStockProductsCount.moduleAvailable").value(true))
+                .andExpect(jsonPath("$.data.lowStockProductsCount.value").value(0));
 
         // Invalid date range rejected
         mockMvc.perform(get("/api/v1/dashboard/summary")

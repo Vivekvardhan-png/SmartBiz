@@ -7,6 +7,7 @@ import com.nexusops.platform.crm.LeadStatus;
 import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse;
 import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse.DeferredMetric;
 import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse.MetricDefinition;
+import com.nexusops.platform.inventory.ProductRepository;
 import com.nexusops.platform.security.TenantPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +26,16 @@ public class DashboardService {
 
     private final CustomerRepository customerRepository;
     private final LeadRepository leadRepository;
+    private final ProductRepository productRepository;
     private final Clock clock;
 
     public DashboardService(
             CustomerRepository customerRepository,
-            LeadRepository leadRepository) {
+            LeadRepository leadRepository,
+            ProductRepository productRepository) {
         this.customerRepository = customerRepository;
         this.leadRepository = leadRepository;
+        this.productRepository = productRepository;
         this.clock = Clock.systemUTC();
     }
 
@@ -55,6 +59,7 @@ public class DashboardService {
         long totalCustomers = customerRepository.countByOrganizationId(orgId);
         long openLeads = leadRepository.countByOrganizationIdAndStatusIn(
                 orgId, LeadStatus.OPEN_STATUSES);
+        long lowStockProductsCount = productRepository.countLowStockProducts(orgId);
 
         Map<LeadStatus, Long> leadsByStage = new EnumMap<>(LeadStatus.class);
         for (LeadStatus status : LeadStatus.values()) {
@@ -86,9 +91,9 @@ public class DashboardService {
                         "Outstanding invoice balances are scheduled for Prompt 05."
                 ),
                 new DeferredMetric<>(
-                        0L,
-                        false,
-                        "Inventory stock thresholds are scheduled for Prompt 04."
+                        lowStockProductsCount,
+                        true,
+                        "Active products with stock quantity at or below threshold."
                 ),
                 buildDefinitions()
         );
@@ -136,7 +141,7 @@ public class DashboardService {
                         "lowStockProductsCount",
                         "COUNT(products.id) where active = true AND stock_quantity <= low_stock_threshold",
                         "Current snapshot",
-                        false
+                        true
                 )
         );
     }

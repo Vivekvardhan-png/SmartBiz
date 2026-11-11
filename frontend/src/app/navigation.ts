@@ -62,7 +62,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     group: 'Modules',
     icon: Package,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
-    statusLabel: 'Planned',
+    statusLabel: 'Active',
     targetPhase: 'Prompt 04',
     description:
       'Product catalog, SKU management, suppliers, stock levels, and auditable inventory movements.',
