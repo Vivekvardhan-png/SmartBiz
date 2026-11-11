@@ -75,7 +75,7 @@ describe('AppShell authentication and role-aware visibility', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Sign in to NexusOps' }),
+      screen.getByRole('heading', { name: 'Sign in to SmartBiz' }),
     ).toBeInTheDocument();
   });
 

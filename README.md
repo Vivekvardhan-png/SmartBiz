@@ -1,101 +1,88 @@
-# CRM + ERP Platform
+# SmartBiz
 
-AI-integrated, cloud-based CRM and ERP management platform for small and medium businesses.
+**SmartBiz** is an AI-integrated, cloud-based CRM and ERP management platform built for small and medium businesses. It brings customer pipeline tracking, inventory control, sales orders, invoicing, financial reporting, forecasting, and a permission-checked business assistant together in a single organization-isolated workspace.
 
-## Current Phase Status
+---
 
-- **Phase 00 (Completed):** Repository audit, centralized design tokens, shared UI primitives, and responsive role-aware application shell in `frontend/`.
-- **Phase 01 (Completed & Verified against PostgreSQL 18):** Spring Boot modular monolith backend foundation in `backend/` with environment-based PostgreSQL config, Flyway migrations, validation & centralized error handling, health/readiness endpoints, explicit CORS, OpenAPI docs, and Maven Wrapper (`mvnw.cmd`).
-- **Phase 02 (Completed):** Spring Security Bearer JWT authentication + revocable PostgreSQL `auth_sessions`, BCrypt password hashing, organization onboarding, multi-tenant isolation (`TenantPrincipal`/`TenantContext`), role/permission checks, and React login/register/administration UI in `frontend/`.
-- **Phase 03 (Completed):** Organization-scoped Dashboard metrics (`/api/v1/dashboard/summary`) and CRM Lead/Customer pipeline, search/filter/pagination, follow-up notes, and idempotent lead-to-customer conversion (`V3__crm_module.sql`) with connected React UI (`DashboardPage`, `CrmPage`).
-- **Phase 04 (Completed):** Organization-scoped Inventory & Suppliers (`V4__inventory_module.sql`): products, SKUs, suppliers, supplier-product links, pessimistic-locked & idempotent stock movements, movement audit history, low-stock dashboard integration, and React `OperationsPage`.
-- **Phase 05 (Completed):** Sales Orders, Invoices & Payments (`V5__sales_and_finance.sql`): backend `BigDecimal` pricing/discount/tax math, atomic stock deductions/restorations, sequential idempotent invoice generation, append-only payment & refund ledger, live dashboard revenue/order/balance metrics, and React `FinancePage`.
-- **Phase 06 (Completed):** Business Reports & Forecasting: 6 organization-scoped reports, formula-safe CSV exports (`CsvSanitizer`), Python + pandas + scikit-learn forecasting service (`forecasting/`) with holdout MAE/WAPE evaluation and graceful fallback when unavailable, and React `InsightsPage`.
-- **Phases 07–08 (Upcoming):** AI Assistant & Automation, and Release Hardening.
+## Key Features
 
-See `BUILD_PROMPTS.md` for the phased implementation roadmap and `docs/architecture/auth-and-tenancy.md` for the security architecture.
+- **Authentication & Organization Management:** Sign up, login, revocable session tokens, multi-organization switching, and role-based permissions (`OWNER`, `ADMIN`, `MANAGER`, `EMPLOYEE`).
+- **Dashboard:** Organization-scoped overview of customers, open leads, pipeline breakdown, low-stock counts, order counts, revenue, and outstanding balances.
+- **CRM:** Lead tracking, stage transitions, follow-up notes, customer directory, and idempotent lead-to-customer conversion.
+- **Inventory & Suppliers:** Product catalog with SKU management, supplier links, low-stock thresholds, and auditable stock movements.
+- **Sales & Finance:** Sales orders with atomic stock deductions, sequential invoice generation, and append-only payment/refund tracking.
+- **Business Reports & Forecasting:** Date-filtered operational/financial reports, safe CSV exports, and optional statistical sales & product demand forecasting.
+- **AI Assistant & Automation:** Controlled conversational assistant (with source citations and confirmation-gated write actions) plus deterministic low-stock and follow-up reminder alerts.
+- **HR Module (Planned):** Navigation placeholder reserved for future HR features (`Scope Pending PRD`).
 
-## Repository Structure
+---
+
+## Technology Stack
+
+- **Frontend:** React 19, TypeScript, Vite, React Router, Lucide Icons
+- **Backend:** Java 21 LTS, Spring Boot 3.3.5 (Spring Web, Spring Data JPA, Spring Security, Bean Validation, Actuator, OpenAPI/Swagger), Maven Wrapper (`3.9.9`)
+- **Database:** PostgreSQL + Flyway schema migrations (`V1`–`V6`)
+- **Optional Integrations:**
+  - Python FastAPI + pandas + scikit-learn forecasting sidecar (`forecasting/`)
+  - External OpenAI-compatible LLM Chat Completions API (server-side integration)
+
+---
+
+## Architecture Overview
+
+SmartBiz runs as a modular monolith backend paired with a React single-page application and PostgreSQL database. All authentication, role checks, tenant isolation (`organization_id`), and financial/inventory transactions are enforced on the Java backend. Optional forecasting and AI assistant calls are routed securely from the backend, so the core platform continues functioning normally even when optional services are disabled.
+
+```mermaid
+flowchart LR
+  User["Browser (React + Vite UI :5173)"] -->|HTTPS / REST + JWT| Backend["Spring Boot Backend (:8080)"]
+  Backend -->|JPA + Flyway| DB["PostgreSQL Database (:5432)"]
+  Backend -.->|"Optional X-Internal-API-Key"| Forecasting["Python Forecasting Service (:8001)"]
+  Backend -.->|"Optional Server-Side API Key"| LLM["External LLM Provider API"]
+```
+
+### Repository Structure
 
 ```text
 .
-├── BUILD_PROMPTS.md        # Phased engineering implementation guide
-├── README.md               # Repository overview and setup instructions
-├── frontend/               # React + Vite + TypeScript frontend application
-│   ├── .env.example
-│   └── src/
-│       ├── app/            # Navigation metadata & shell role-preview context
-│       ├── components/
-│       │   ├── shell/      # Responsive AppShell with role-aware navigation
-│       │   └── ui/         # Reusable design-system primitives
-│       ├── design-system/  # Centralized CSS/TS tokens and global styles
-│       └── pages/          # Module foundation placeholders & Design System showcase
-└── backend/                # Java 21 + Spring Boot 3.3 + Maven modular monolith
-    ├── .env.example
-    ├── mvnw / mvnw.cmd     # Self-contained Maven Wrapper
-    ├── pom.xml
-    └── src/
-        ├── main/java/com/nexusops/platform/
-        │   ├── common/     # API envelopes (ApiResponse, PagedResponse, ErrorResponse) & GlobalExceptionHandler
-        │   ├── config/     # CORS, Jackson, OpenAPI, Security foundation
-        │   └── health/     # /api/v1/ping connectivity endpoint
-        └── main/resources/
-            ├── application.yml
-            ├── application-local.yml
-            └── db/migration/V1__init_schema.sql
+├── Guide.md                  # Beginner-friendly setup, run & test guide
+├── README.md                 # Project overview and architecture
+├── frontend/                 # React + TypeScript + Vite web app
+│   ├── src/
+│   │   ├── app/              # Auth context & role-aware navigation
+│   │   ├── components/       # Layout shell & shared UI primitives
+│   │   ├── design-system/    # CSS tokens & global styles
+│   │   ├── lib/              # API client & typed domain models
+│   │   └── pages/            # Application pages & Vitest tests
+│   └── .env.example
+├── backend/                  # Spring Boot modular monolith API
+│   ├── src/main/java/com/nexusops/platform/
+│   │   ├── assistant/        # Controlled AI assistant & tool gateway
+│   │   ├── automation/       # Deterministic alerts & audit runs
+│   │   ├── common/           # Shared envelopes & error handling
+│   │   ├── config/           # Security, CORS, OpenAPI & Jackson config
+│   │   ├── crm/              # Leads, customers & notes
+│   │   ├── dashboard/        # Dashboard KPI summary service
+│   │   ├── finance/          # Sales orders, invoices & payments
+│   │   ├── health/           # Ping probe
+│   │   ├── identity/         # Users, organizations, roles & sessions
+│   │   ├── insights/         # Business reports, CSV export & forecasting client
+│   │   ├── inventory/        # Products, suppliers & stock movements
+│   │   └── security/         # JWT verification & tenant context
+│   ├── src/main/resources/
+│   │   ├── application*.yml  # Base, local & prod configurations
+│   │   └── db/migration/     # Flyway SQL migrations (V1–V6)
+│   ├── mvnw / mvnw.cmd       # Included Maven Wrapper
+│   └── .env.example
+├── forecasting/              # Optional Python FastAPI forecasting microservice
+│   ├── app/                  # API endpoints & scikit-learn engine
+│   ├── tests/                # Pytest suite
+│   ├── requirements.txt
+│   └── .env.example
+└── docs/                     # Architecture & operational runbooks
 ```
 
-## Running the Frontend Locally
+---
 
-Prerequisites: Node.js 20+ (verified with Node v24.11.1 and npm 11.12.0).
+## Documentation
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend verification:
-
-```powershell
-cd frontend
-npm run lint
-npm run test
-npm run build
-```
-
-## Running the Backend Locally
-
-Prerequisites:
-- Java 21+ JDK (verified compiling target `21` on Java `25.0.1 LTS`)
-- Local PostgreSQL 14+ database (not yet provisioned in this environment; required before starting the live server)
-
-1. Configure environment variables:
-
-```powershell
-cd backend
-Copy-Item .env.example .env
-# Edit .env with your PostgreSQL DB_URL, DB_USERNAME, DB_PASSWORD, CORS_ALLOWED_ORIGINS, JWT_SECRET, and JWT_EXPIRATION_SECONDS
-```
-
-2. Run backend unit & slice tests (uses H2 in-memory; does not require PostgreSQL):
-
-```powershell
-cd backend
-.\mvnw.cmd test
-```
-
-3. Start the backend against PostgreSQL (Flyway runs `V1__init_schema.sql` automatically):
-
-```powershell
-cd backend
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
-```
-
-4. Key local URLs once running:
-- Ping endpoint: `http://localhost:8080/api/v1/ping`
-- Actuator health: `http://localhost:8080/actuator/health`
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- OpenAPI spec: `http://localhost:8080/v3/api-docs`
-
-For AI assistant (`AI_ASSISTANT_ENABLED=true`, `AI_PROVIDER_API_KEY`) and automation scheduler (`AUTOMATION_SCHEDULER_ENABLED`) configuration, see [`backend/.env.example`](backend/.env.example) and [`docs/architecture/assistant-and-automation.md`](docs/architecture/assistant-and-automation.md).
+For step-by-step instructions on installing tools, configuring environment files, setting up PostgreSQL, running the project locally, and running tests, see **[`Guide.md`](Guide.md)**.

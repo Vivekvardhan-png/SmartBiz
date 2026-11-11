@@ -33,7 +33,7 @@ class PingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value("UP"))
-                .andExpect(jsonPath("$.application").value("NexusOps Platform"))
+                .andExpect(jsonPath("$.application").value("SmartBiz"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty());
     }
 
@@ -53,7 +53,7 @@ class PingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.openapi").isNotEmpty())
-                .andExpect(jsonPath("$.info.title").value("NexusOps Platform API"));
+                .andExpect(jsonPath("$.info.title").value("SmartBiz API"));
     }
 
     @Test

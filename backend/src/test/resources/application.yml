@@ -2,7 +2,7 @@ spring:
   # Use H2 in-memory database for all tests.
   # Flyway is disabled in tests - schema is managed by Hibernate's create-drop.
   datasource:
-    url: jdbc:h2:mem:nexusops_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;NON_KEYWORDS=USER,VALUE
+    url: jdbc:h2:mem:smartbiz_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;NON_KEYWORDS=USER,VALUE
     driver-class-name: org.h2.Driver
     username: sa
     password:

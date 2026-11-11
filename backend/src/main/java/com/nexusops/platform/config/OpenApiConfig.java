@@ -21,21 +21,21 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    @Value("${spring.application.name:NexusOps Platform}")
+    @Value("${spring.application.name:smartbiz}")
     private String applicationName;
 
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title(applicationName + " API")
+                        .title("SmartBiz API")
                         .description("""
-                                REST API for the NexusOps CRM and ERP platform.
-                                All business endpoints require authentication (implemented in Prompt 02).
+                                REST API for the SmartBiz CRM and ERP platform.
+                                All business endpoints require authentication (service: %s).
                                 Organization-scoped data isolation is enforced server-side.
-                                """)
+                                """.formatted(applicationName))
                         .version("0.1.0")
-                        .contact(new Contact().name("NexusOps Engineering"))
+                        .contact(new Contact().name("SmartBiz Engineering"))
                         .license(new License().name("Proprietary")))
                 .servers(List.of(
                         new Server()

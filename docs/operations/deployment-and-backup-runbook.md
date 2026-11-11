@@ -3,7 +3,7 @@
 ## 1. Required Environment Variables
 
 ### Backend (`backend/`)
-- `DB_URL`: JDBC URL for PostgreSQL (e.g. `jdbc:postgresql://localhost:5432/nexusops_dev`)
+- `DB_URL`: JDBC URL for PostgreSQL (e.g. `jdbc:postgresql://localhost:5432/smartbiz_dev`)
 - `DB_USERNAME`: PostgreSQL application user
 - `DB_PASSWORD`: PostgreSQL password (never commit or embed in `application.yml`)
 - `JWT_SECRET`: High-entropy HS256 signing secret, minimum 32 bytes (validated on startup by `JwtProperties`)
@@ -35,13 +35,13 @@ Health & readiness probes:
 
 ### Backup (`pg_dump`)
 ```powershell
-pg_dump -h <DB_HOST> -p 5432 -U <DB_USER> -Fc -f nexusops_backup.dump <DB_NAME>
+pg_dump -h <DB_HOST> -p 5432 -U <DB_USER> -Fc -f smartbiz_backup.dump <DB_NAME>
 ```
 
 ### Restore & Verify (`pg_restore`)
 ```powershell
 createdb -h <DB_HOST> -p 5432 -U <DB_USER> <TARGET_RESTORE_DB>
-pg_restore -h <DB_HOST> -p 5432 -U <DB_USER> -d <TARGET_RESTORE_DB> --clean --if-exists nexusops_backup.dump
+pg_restore -h <DB_HOST> -p 5432 -U <DB_USER> -d <TARGET_RESTORE_DB> --clean --if-exists smartbiz_backup.dump
 psql -h <DB_HOST> -p 5432 -U <DB_USER> -d <TARGET_RESTORE_DB> -c "SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank;"
 ```
 

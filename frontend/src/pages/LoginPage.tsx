@@ -71,7 +71,7 @@ export function LoginPage() {
         <Card>
           <form onSubmit={handleSubmit} noValidate>
             <CardHeader
-              title="Sign in to NexusOps"
+              title="Sign in to SmartBiz"
               description="Access your organization workspace."
             />
             <CardContent className="foundation-stack">

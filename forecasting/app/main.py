@@ -13,7 +13,7 @@ from app.engine import (
 )
 
 app = FastAPI(
-    title="NexusOps Forecasting Service",
+    title="SmartBiz Forecasting Service",
     version="0.1.0",
     docs_url=None,
     redoc_url=None,

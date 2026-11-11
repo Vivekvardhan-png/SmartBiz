@@ -89,9 +89,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="app-sidebar__brand">
           <Link to="/dashboard" className="app-brand">
             <span className="app-brand__mark" aria-hidden="true">
-              NX
+              SB
             </span>
-            <span>NexusOps</span>
+            <span>SmartBiz</span>
           </Link>
           <Button
             variant="ghost"

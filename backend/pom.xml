@@ -14,8 +14,8 @@
     <groupId>com.nexusops</groupId>
     <artifactId>nexusops-platform</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>NexusOps Platform</name>
-    <description>AI-integrated cloud-based CRM and ERP platform for small and medium businesses.</description>
+    <name>SmartBiz</name>
+    <description>SmartBiz AI-integrated cloud CRM and ERP platform for small and medium businesses.</description>
     <packaging>jar</packaging>
 
     <properties>

@@ -5,7 +5,7 @@
 
 ## 1. Selected Authentication Approach
 
-No existing identity provider (such as Supabase Auth) is present in the repository. To keep identity and authorization cohesive inside the Java modular monolith without competing authentication systems, NexusOps uses **Spring Security 6** with:
+No existing identity provider (such as Supabase Auth) is present in the repository. To keep identity and authorization cohesive inside the Java modular monolith without competing authentication systems, SmartBiz uses **Spring Security 6** with:
 
 1. **BCrypt Password Hashing (`BCryptPasswordEncoder`, strength 12):** Plaintext passwords are never stored, logged, or returned.
 2. **Signed Stateless JWT Access Tokens (HMAC-SHA256 via `JWT_SECRET` env var):**

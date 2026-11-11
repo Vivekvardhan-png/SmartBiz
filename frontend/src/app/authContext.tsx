@@ -82,7 +82,7 @@ interface AuthContextValue {
   hasPermission: (permission: Permission) => boolean;
 }
 
-const TOKEN_STORAGE_KEY = 'nexusops.auth.token';
+const TOKEN_STORAGE_KEY = 'smartbiz.auth.token';
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 

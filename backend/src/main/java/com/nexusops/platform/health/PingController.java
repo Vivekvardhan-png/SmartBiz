@@ -40,7 +40,7 @@ public class PingController {
     public ResponseEntity<Map<String, Object>> ping() {
         return ResponseEntity.ok(Map.of(
                 "status", "UP",
-                "application", "NexusOps Platform",
+                "application", "SmartBiz",
                 "timestamp", Instant.now().toString()
         ));
     }

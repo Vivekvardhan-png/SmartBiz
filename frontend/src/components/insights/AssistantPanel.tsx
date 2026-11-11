@@ -140,7 +140,7 @@ export function AssistantPanel() {
 
       <Card>
         <CardHeader
-          title="Ask NexusOps Assistant"
+          title="Ask SmartBiz Assistant"
           description="Query authorized sales summaries, low-stock SKUs, customer records, order status, or outstanding balances."
           actions={<Bot size={18} aria-hidden="true" />}
         />

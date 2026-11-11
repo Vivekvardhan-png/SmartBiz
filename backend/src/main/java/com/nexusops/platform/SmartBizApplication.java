@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * NexusOps Platform — AI-integrated CRM and ERP for small and medium businesses.
+ * SmartBiz — AI-integrated CRM and ERP for small and medium businesses.
  *
  * <p>Modular monolith: business logic is organized into domain packages under
  * {@code com.nexusops.platform}. No microservices. Cross-cutting concerns
@@ -14,10 +14,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Flyway, Spring Data JPA, Spring Security, Springdoc OpenAPI.
  */
 @SpringBootApplication
-public class NexusOpsApplication {
+public class SmartBizApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NexusOpsApplication.class, args);
+        SpringApplication.run(SmartBizApplication.class, args);
     }
 }
 
