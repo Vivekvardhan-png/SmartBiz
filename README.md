@@ -7,7 +7,8 @@ AI-integrated, cloud-based CRM and ERP management platform for small and medium 
 - **Phase 00 (Completed):** Repository audit, centralized design tokens, shared UI primitives, and responsive role-aware application shell in `frontend/`.
 - **Phase 01 (Completed & Verified against PostgreSQL 18):** Spring Boot modular monolith backend foundation in `backend/` with environment-based PostgreSQL config, Flyway migrations, validation & centralized error handling, health/readiness endpoints, explicit CORS, OpenAPI docs, and Maven Wrapper (`mvnw.cmd`).
 - **Phase 02 (Completed):** Spring Security Bearer JWT authentication + revocable PostgreSQL `auth_sessions`, BCrypt password hashing, organization onboarding, multi-tenant isolation (`TenantPrincipal`/`TenantContext`), role/permission checks, and React login/register/administration UI in `frontend/`.
-- **Phases 03–08 (Upcoming):** Dashboard & CRM, Inventory & Suppliers, Sales & Finance, Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
+- **Phase 03 (Completed):** Organization-scoped Dashboard metrics (`/api/v1/dashboard/summary`) and CRM Lead/Customer pipeline, search/filter/pagination, follow-up notes, and idempotent lead-to-customer conversion (`V3__crm_module.sql`) with connected React UI (`DashboardPage`, `CrmPage`).
+- **Phases 04–08 (Upcoming):** Inventory & Suppliers, Sales & Finance, Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
 
 See `BUILD_PROMPTS.md` for the phased implementation roadmap and `docs/architecture/auth-and-tenancy.md` for the security architecture.
 

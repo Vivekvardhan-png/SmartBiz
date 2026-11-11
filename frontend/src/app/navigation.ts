@@ -38,7 +38,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     group: 'Workspace',
     icon: LayoutDashboard,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
-    statusLabel: 'Foundation',
+    statusLabel: 'Active',
     targetPhase: 'Prompt 03',
     description:
       'Executive overview for authorized organization metrics, pipeline activity, invoice balances, and low-stock alerts.',
@@ -50,7 +50,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     group: 'Modules',
     icon: Users,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
-    statusLabel: 'Planned',
+    statusLabel: 'Active',
     targetPhase: 'Prompt 03',
     description:
       'Lead pipeline, customer directory, follow-up tracking, and transactional lead-to-customer conversion.',

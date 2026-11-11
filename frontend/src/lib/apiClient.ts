@@ -94,7 +94,12 @@ export async function apiRequest<T>(
     );
   }
 
-  if (parsed && typeof parsed === 'object' && 'data' in parsed) {
+  if (
+    parsed &&
+    typeof parsed === 'object' &&
+    'data' in parsed &&
+    !('totalItems' in parsed)
+  ) {
     return (parsed as { data: T }).data;
   }
 

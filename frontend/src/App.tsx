@@ -4,6 +4,8 @@ import { NAVIGATION_ITEMS } from './app/navigation';
 import { AppShell } from './components/shell/AppShell';
 import { SkeletonText, ToastProvider } from './components/ui';
 import { AdministrationPage } from './pages/AdministrationPage';
+import { CrmPage } from './pages/CrmPage';
+import { DashboardPage } from './pages/DashboardPage';
 import { DesignSystemPage } from './pages/DesignSystemPage';
 import { LoginPage } from './pages/LoginPage';
 import { ModuleFoundationPage } from './pages/ModuleFoundationPage';
@@ -34,7 +36,11 @@ function ProtectedShellRoutes() {
             key={item.id}
             path={item.path}
             element={
-              item.id === 'administration' ? (
+              item.id === 'dashboard' ? (
+                <DashboardPage />
+              ) : item.id === 'crm' ? (
+                <CrmPage />
+              ) : item.id === 'administration' ? (
                 <AdministrationPage />
               ) : (
                 <ModuleFoundationPage module={item} />
