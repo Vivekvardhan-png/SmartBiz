@@ -37,6 +37,21 @@ forecasting:
     connect-timeout-ms: 1000
     read-timeout-ms: 2000
 
+ai:
+  assistant:
+    enabled: true
+    provider-base-url: http://localhost:9999/v1
+    api-key: test-ai-key
+    model: gpt-4o-mini
+    connect-timeout-ms: 1000
+    read-timeout-ms: 2000
+    max-tool-rounds: 4
+    rate-limit-per-minute: 20
+
+automation:
+  scheduler:
+    enabled: false
+
 logging:
   level:
     com.nexusops: WARN

@@ -113,6 +113,18 @@ public class SalesOrderService {
         return buildDetailResponse(principal, order);
     }
 
+    @Transactional(readOnly = true)
+    public SalesOrderDetailResponse getOrderByNumber(TenantPrincipal principal, String orderNumber) {
+        if (orderNumber == null || orderNumber.isBlank()) {
+            throw new BusinessRuleException("Order number is required.");
+        }
+        String normalized = orderNumber.trim();
+        SalesOrder order = orderRepository
+                .findWithItemsByOrganizationIdAndOrderNumberIgnoreCase(principal.organizationId(), normalized)
+                .orElseThrow(() -> new ResourceNotFoundException("SalesOrder", normalized));
+        return buildDetailResponse(principal, order);
+    }
+
     @Transactional
     public SalesOrderDetailResponse createOrder(
             TenantPrincipal principal,

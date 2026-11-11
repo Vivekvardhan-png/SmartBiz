@@ -26,6 +26,16 @@ public interface SalesOrderRepository
             @Param("organizationId") UUID organizationId
     );
 
+    @Query("""
+            SELECT o FROM SalesOrder o
+            LEFT JOIN FETCH o.items
+            WHERE UPPER(o.orderNumber) = UPPER(:orderNumber) AND o.organizationId = :organizationId
+            """)
+    Optional<SalesOrder> findWithItemsByOrganizationIdAndOrderNumberIgnoreCase(
+            @Param("organizationId") UUID organizationId,
+            @Param("orderNumber") String orderNumber
+    );
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT o FROM SalesOrder o WHERE o.id = :id AND o.organizationId = :organizationId")
     Optional<SalesOrder> findForUpdateByIdAndOrganizationId(

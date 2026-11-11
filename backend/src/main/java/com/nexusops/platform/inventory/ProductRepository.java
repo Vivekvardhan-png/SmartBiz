@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,5 +36,15 @@ public interface ProductRepository
               AND p.stockQuantity <= p.lowStockThreshold
             """)
     long countLowStockProducts(@Param("organizationId") UUID organizationId);
+
+    @Query("""
+            SELECT p
+            FROM Product p
+            WHERE p.organizationId = :organizationId
+              AND p.active = true
+              AND p.stockQuantity <= p.lowStockThreshold
+            ORDER BY p.stockQuantity ASC, p.name ASC
+            """)
+    List<Product> findActiveLowStockProducts(@Param("organizationId") UUID organizationId);
 }
 

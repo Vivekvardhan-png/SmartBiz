@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,21 @@ public interface LeadRepository
     );
 
     long countByOrganizationIdAndStatusIn(UUID organizationId, Collection<LeadStatus> statuses);
+
+    @Query("""
+            SELECT l
+            FROM Lead l
+            WHERE l.organizationId = :organizationId
+              AND l.followUpDate IS NOT NULL
+              AND l.followUpDate <= :cutoffDate
+              AND l.status IN :openStatuses
+            ORDER BY l.followUpDate ASC, l.createdAt ASC
+            """)
+    List<Lead> findDueFollowUpLeads(
+            @Param("organizationId") UUID organizationId,
+            @Param("cutoffDate") LocalDate cutoffDate,
+            @Param("openStatuses") Collection<LeadStatus> openStatuses
+    );
 
     @Query("""
             SELECT l.status AS status,

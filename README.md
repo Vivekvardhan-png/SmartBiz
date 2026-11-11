@@ -97,3 +97,5 @@ cd backend
 - Actuator health: `http://localhost:8080/actuator/health`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - OpenAPI spec: `http://localhost:8080/v3/api-docs`
+
+For AI assistant (`AI_ASSISTANT_ENABLED=true`, `AI_PROVIDER_API_KEY`) and automation scheduler (`AUTOMATION_SCHEDULER_ENABLED`) configuration, see [`backend/.env.example`](backend/.env.example) and [`docs/architecture/assistant-and-automation.md`](docs/architecture/assistant-and-automation.md).

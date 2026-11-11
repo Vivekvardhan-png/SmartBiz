@@ -125,6 +125,26 @@ forecasting:
     read-timeout-ms: ${FORECASTING_READ_TIMEOUT_MS:5000}
 
 # ============================================================
+# Controlled AI Assistant & Deterministic Automation (Prompt 07)
+# API keys stay strictly server-side; never expose to frontend.
+# ============================================================
+ai:
+  assistant:
+    enabled: ${AI_ASSISTANT_ENABLED:false}
+    provider-base-url: ${AI_PROVIDER_BASE_URL:https://api.openai.com/v1}
+    api-key: ${AI_PROVIDER_API_KEY:}
+    model: ${AI_MODEL:gpt-4o-mini}
+    connect-timeout-ms: ${AI_CONNECT_TIMEOUT_MS:3000}
+    read-timeout-ms: ${AI_READ_TIMEOUT_MS:20000}
+    max-tool-rounds: ${AI_MAX_TOOL_ROUNDS:4}
+    rate-limit-per-minute: ${AI_RATE_LIMIT_PER_MINUTE:20}
+
+automation:
+  scheduler:
+    enabled: ${AUTOMATION_SCHEDULER_ENABLED:false}
+    cron: ${AUTOMATION_SCHEDULER_CRON:0 0 */6 * * *}
+
+# ============================================================
 # Logging
 # - Log structured INFO in production; DEBUG in local.
 # - Never log passwords, tokens, or sensitive business data.

@@ -21,6 +21,8 @@ import {
 import { apiRequest, ApiError, getApiBaseUrl } from '../lib/apiClient';
 import type { PagedResponse } from '../lib/crmTypes';
 import type { Product, StockMovement } from '../lib/inventoryTypes';
+import { AssistantPanel } from '../components/insights/AssistantPanel';
+import { AutomationPanel } from '../components/insights/AutomationPanel';
 import type {
   ForecastPoint,
   ForecastResponse,
@@ -35,7 +37,7 @@ import type {
   SalesOverTimeReport,
 } from '../lib/insightsTypes';
 
-type InsightsTab = 'reports' | 'forecasting';
+type InsightsTab = 'reports' | 'forecasting' | 'assistant' | 'automation';
 
 function SimpleBarChart({
   title,
@@ -393,16 +395,16 @@ export function InsightsPage() {
   return (
     <div className="foundation-stack">
       <PageHeader
-        title="Insights & Forecasting"
-        subtitle="Reconciled organization reports, formula-safe CSV exports, and holdout-evaluated forecasting."
+        title="Insights, Forecasting & AI Assistant"
+        subtitle="Reconciled organization reports, holdout-evaluated forecasting, controlled AI assistant, and deterministic automation."
         breadcrumbs={[
           { label: 'Workspace', to: '/dashboard' },
           { label: 'Insights' },
         ]}
-        badge={<Badge variant="success">Active · Prompt 06</Badge>}
+        badge={<Badge variant="success">Active · Prompts 06 & 07</Badge>}
       />
 
-      <div className="foundation-row" role="tablist" aria-label="Insights views">
+      <div className="foundation-row" role="tablist" aria-label="Insights views" style={{ flexWrap: 'wrap' }}>
         <Button
           role="tab"
           aria-selected={activeTab === 'reports'}
@@ -418,6 +420,22 @@ export function InsightsPage() {
           onClick={() => setActiveTab('forecasting')}
         >
           Forecasting
+        </Button>
+        <Button
+          role="tab"
+          aria-selected={activeTab === 'assistant'}
+          variant={activeTab === 'assistant' ? 'primary' : 'secondary'}
+          onClick={() => setActiveTab('assistant')}
+        >
+          AI Assistant
+        </Button>
+        <Button
+          role="tab"
+          aria-selected={activeTab === 'automation'}
+          variant={activeTab === 'automation' ? 'primary' : 'secondary'}
+          onClick={() => setActiveTab('automation')}
+        >
+          Automation
         </Button>
       </div>
 
@@ -641,7 +659,7 @@ export function InsightsPage() {
             </div>
           </StateBoundary>
         </div>
-      ) : (
+      ) : activeTab === 'forecasting' ? (
         <div className="foundation-stack">
           <Alert
             variant="info"
@@ -791,6 +809,10 @@ export function InsightsPage() {
             ) : null}
           </StateBoundary>
         </div>
+      ) : activeTab === 'assistant' ? (
+        <AssistantPanel />
+      ) : (
+        <AutomationPanel />
       )}
     </div>
   );
