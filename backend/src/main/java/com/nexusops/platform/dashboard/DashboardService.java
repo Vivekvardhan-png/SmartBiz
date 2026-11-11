@@ -7,16 +7,21 @@ import com.nexusops.platform.crm.LeadStatus;
 import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse;
 import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse.DeferredMetric;
 import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse.MetricDefinition;
+import com.nexusops.platform.finance.InvoiceRepository;
+import com.nexusops.platform.finance.SalesOrderRepository;
+import com.nexusops.platform.finance.SalesOrderStatus;
 import com.nexusops.platform.inventory.ProductRepository;
 import com.nexusops.platform.security.TenantPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,15 +32,21 @@ public class DashboardService {
     private final CustomerRepository customerRepository;
     private final LeadRepository leadRepository;
     private final ProductRepository productRepository;
+    private final SalesOrderRepository salesOrderRepository;
+    private final InvoiceRepository invoiceRepository;
     private final Clock clock;
 
     public DashboardService(
             CustomerRepository customerRepository,
             LeadRepository leadRepository,
-            ProductRepository productRepository) {
+            ProductRepository productRepository,
+            SalesOrderRepository salesOrderRepository,
+            InvoiceRepository invoiceRepository) {
         this.customerRepository = customerRepository;
         this.leadRepository = leadRepository;
         this.productRepository = productRepository;
+        this.salesOrderRepository = salesOrderRepository;
+        this.invoiceRepository = invoiceRepository;
         this.clock = Clock.systemUTC();
     }
 
@@ -69,6 +80,22 @@ public class DashboardService {
             leadsByStage.put(row.getStatus(), row.getTotal());
         }
 
+        Map<String, Long> ordersByStatus = new LinkedHashMap<>();
+        for (SalesOrderStatus status : SalesOrderStatus.values()) {
+            ordersByStatus.put(status.name(), 0L);
+        }
+        for (SalesOrderRepository.OrderStatusCount row
+                : salesOrderRepository.countByStatusInDateRange(orgId, periodStart, periodEnd)) {
+            ordersByStatus.put(row.getStatus().name(), row.getTotal());
+        }
+
+        BigDecimal periodRevenue = invoiceRepository
+                .sumRevenueInDateRange(orgId, periodStart, periodEnd)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal outstandingBalance = invoiceRepository
+                .sumOutstandingBalance(orgId)
+                .setScale(2, RoundingMode.HALF_UP);
+
         return new DashboardSummaryResponse(
                 periodStart,
                 periodEnd,
@@ -76,19 +103,19 @@ public class DashboardService {
                 openLeads,
                 leadsByStage,
                 new DeferredMetric<>(
-                        Map.of(),
-                        false,
-                        "Sales orders module is scheduled for Prompt 05."
+                        ordersByStatus,
+                        true,
+                        "Sales orders grouped by status within selected UTC period."
                 ),
                 new DeferredMetric<>(
-                        new BigDecimal("0.00"),
-                        false,
-                        "Revenue reporting from issued non-voided invoices is scheduled for Prompt 05."
+                        periodRevenue,
+                        true,
+                        "Sum of non-voided, non-refunded invoice totals issued in selected UTC period."
                 ),
                 new DeferredMetric<>(
-                        new BigDecimal("0.00"),
-                        false,
-                        "Outstanding invoice balances are scheduled for Prompt 05."
+                        outstandingBalance,
+                        true,
+                        "Total remaining balance across ISSUED and PARTIALLY_PAID invoices."
                 ),
                 new DeferredMetric<>(
                         lowStockProductsCount,
@@ -123,19 +150,19 @@ public class DashboardService {
                         "salesOrdersByStatus",
                         "COUNT(sales_orders.id) grouped by status",
                         "Selected UTC date range",
-                        false
+                        true
                 ),
                 new MetricDefinition(
                         "periodRevenue",
-                        "SUM(invoices.total_amount) for issued non-voided invoices excluding CANCELLED orders",
+                        "SUM(invoices.total_amount) for ISSUED/PARTIALLY_PAID/PAID invoices",
                         "Selected UTC date range",
-                        false
+                        true
                 ),
                 new MetricDefinition(
                         "outstandingInvoiceBalance",
-                        "SUM(invoices.total_amount - COALESCE(SUM(payments.amount), 0)) for non-voided invoices",
+                        "SUM(invoices.total_amount - invoices.paid_amount) for ISSUED/PARTIALLY_PAID invoices",
                         "Current snapshot",
-                        false
+                        true
                 ),
                 new MetricDefinition(
                         "lowStockProductsCount",
@@ -146,4 +173,3 @@ public class DashboardService {
         );
     }
 }
-

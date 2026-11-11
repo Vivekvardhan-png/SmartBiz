@@ -297,7 +297,7 @@ class DashboardAndCrmIntegrationTest {
                 .andExpect(jsonPath("$.data.openLeads").value(1))
                 .andExpect(jsonPath("$.data.leadsByStage.NEW").value(1))
                 .andExpect(jsonPath("$.data.leadsByStage.LOST").value(1))
-                .andExpect(jsonPath("$.data.periodRevenue.moduleAvailable").value(false))
+                .andExpect(jsonPath("$.data.periodRevenue.moduleAvailable").value(true))
                 .andExpect(jsonPath("$.data.lowStockProductsCount.moduleAvailable").value(true))
                 .andExpect(jsonPath("$.data.lowStockProductsCount.value").value(0));
 

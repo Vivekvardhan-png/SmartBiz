@@ -9,7 +9,8 @@ AI-integrated, cloud-based CRM and ERP management platform for small and medium 
 - **Phase 02 (Completed):** Spring Security Bearer JWT authentication + revocable PostgreSQL `auth_sessions`, BCrypt password hashing, organization onboarding, multi-tenant isolation (`TenantPrincipal`/`TenantContext`), role/permission checks, and React login/register/administration UI in `frontend/`.
 - **Phase 03 (Completed):** Organization-scoped Dashboard metrics (`/api/v1/dashboard/summary`) and CRM Lead/Customer pipeline, search/filter/pagination, follow-up notes, and idempotent lead-to-customer conversion (`V3__crm_module.sql`) with connected React UI (`DashboardPage`, `CrmPage`).
 - **Phase 04 (Completed):** Organization-scoped Inventory & Suppliers (`V4__inventory_module.sql`): products, SKUs, suppliers, supplier-product links, pessimistic-locked & idempotent stock movements, movement audit history, low-stock dashboard integration, and React `OperationsPage`.
-- **Phases 05–08 (Upcoming):** Sales & Finance, Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
+- **Phase 05 (Completed):** Sales Orders, Invoices & Payments (`V5__sales_and_finance.sql`): backend `BigDecimal` pricing/discount/tax math, atomic stock deductions/restorations, sequential idempotent invoice generation, append-only payment & refund ledger, live dashboard revenue/order/balance metrics, and React `FinancePage`.
+- **Phases 06–08 (Upcoming):** Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
 
 See `BUILD_PROMPTS.md` for the phased implementation roadmap and `docs/architecture/auth-and-tenancy.md` for the security architecture.
 

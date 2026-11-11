@@ -284,7 +284,15 @@ export function DashboardPage() {
               <Card>
                 <CardHeader
                   title="Period Revenue"
-                  actions={<Badge variant="neutral">Prompt 05</Badge>}
+                  actions={
+                    <Badge
+                      variant={
+                        summary.periodRevenue.moduleAvailable ? 'success' : 'neutral'
+                      }
+                    >
+                      {summary.periodRevenue.moduleAvailable ? 'Live' : 'Prompt 05'}
+                    </Badge>
+                  }
                 />
                 <CardContent>
                   <div
@@ -312,7 +320,19 @@ export function DashboardPage() {
               <Card>
                 <CardHeader
                   title="Outstanding Invoice Balance"
-                  actions={<Badge variant="neutral">Prompt 05</Badge>}
+                  actions={
+                    <Badge
+                      variant={
+                        summary.outstandingInvoiceBalance.moduleAvailable
+                          ? 'success'
+                          : 'neutral'
+                      }
+                    >
+                      {summary.outstandingInvoiceBalance.moduleAvailable
+                        ? 'Live'
+                        : 'Prompt 05'}
+                    </Badge>
+                  }
                 />
                 <CardContent>
                   <div
@@ -340,17 +360,41 @@ export function DashboardPage() {
               <Card>
                 <CardHeader
                   title="Sales Orders by Status"
-                  actions={<Badge variant="neutral">Prompt 05</Badge>}
+                  actions={
+                    <Badge
+                      variant={
+                        summary.salesOrdersByStatus.moduleAvailable
+                          ? 'success'
+                          : 'neutral'
+                      }
+                    >
+                      {summary.salesOrdersByStatus.moduleAvailable
+                        ? 'Live'
+                        : 'Prompt 05'}
+                    </Badge>
+                  }
                 />
                 <CardContent>
-                  <div
-                    style={{
-                      fontSize: 'var(--text-2xl)',
-                      fontWeight: 'var(--weight-bold)',
-                    }}
-                  >
-                    {Object.keys(summary.salesOrdersByStatus.value).length}
-                  </div>
+                  {summary.salesOrdersByStatus.moduleAvailable ? (
+                    <div className="foundation-row">
+                      {Object.entries(summary.salesOrdersByStatus.value).map(
+                        ([statusKey, count]) => (
+                          <Badge key={statusKey} variant="neutral">
+                            {statusKey}: {count}
+                          </Badge>
+                        ),
+                      )}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        fontSize: 'var(--text-2xl)',
+                        fontWeight: 'var(--weight-bold)',
+                      }}
+                    >
+                      {Object.keys(summary.salesOrdersByStatus.value).length}
+                    </div>
+                  )}
                   <p
                     style={{
                       marginTop: 'var(--space-1)',

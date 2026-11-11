@@ -74,7 +74,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     group: 'Modules',
     icon: Receipt,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER'],
-    statusLabel: 'Planned',
+    statusLabel: 'Active',
     targetPhase: 'Prompt 05',
     description:
       'Sales orders, invoice generation, payment recording, and reconciled outstanding balances.',
