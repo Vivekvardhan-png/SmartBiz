@@ -132,7 +132,7 @@ export function DashboardPage() {
           { label: 'Workspace', to: '/dashboard' },
           { label: 'Dashboard' },
         ]}
-        badge={<Badge variant="success">Active · Prompt 03</Badge>}
+        badge={<Badge variant="success">Active</Badge>}
         actions={
           <Link to="/crm" className="ui-btn ui-btn--primary ui-btn--md">
             Open CRM Pipeline
@@ -254,7 +254,7 @@ export function DashboardPage() {
                     >
                       {summary.lowStockProductsCount.moduleAvailable
                         ? 'Live'
-                        : 'Prompt 04'}
+                        : 'Restricted'}
                     </Badge>
                   }
                 />

@@ -16,7 +16,7 @@ export function NotFoundPage() {
       <EmptyState
         icon={<Compass size={20} />}
         title="Route unavailable"
-        description="Use the navigation menu or return to the Dashboard foundation."
+        description="Use the navigation menu or return to the Dashboard."
         actions={
           <Link to="/dashboard" className="ui-btn ui-btn--primary ui-btn--md">
             Go to Dashboard

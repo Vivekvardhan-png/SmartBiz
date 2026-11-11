@@ -323,7 +323,7 @@ export function AdministrationPage() {
           { label: 'Workspace', to: '/dashboard' },
           { label: 'Administration' },
         ]}
-        badge={<Badge variant="success">Active · Prompt 02</Badge>}
+        badge={<Badge variant="success">Active</Badge>}
         actions={
           canManageMembers ? (
             <Button

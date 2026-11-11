@@ -131,10 +131,28 @@ describe('AppShell authentication and role-aware visibility', () => {
     expect(menuButton).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('allows inspecting the Design System foundation route', () => {
+  it('does not render Foundation or Design System navigation items', () => {
+    renderAuthenticatedShell('OWNER', ['/dashboard']);
+    const nav = screen.getByRole('navigation', { name: 'Modules' });
+
+    expect(within(nav).queryByText('Foundation')).not.toBeInTheDocument();
+    expect(within(nav).queryByText('Design System')).not.toBeInTheDocument();
+    expect(within(nav).queryByText(/Phase 00/i)).not.toBeInTheDocument();
+  });
+
+  it('treats /design-system as an unknown route via the fallback page', () => {
     renderAuthenticatedShell('OWNER', ['/design-system']);
     expect(
-      screen.getByRole('heading', { name: 'Design System Foundation' }),
+      screen.getByRole('heading', { name: 'Page not found' }),
     ).toBeInTheDocument();
+  });
+
+  it('renders the planned HR module without development phase labels', () => {
+    renderAuthenticatedShell('OWNER', ['/hr']);
+    expect(screen.getByRole('heading', { name: 'HR' })).toBeInTheDocument();
+    expect(
+      screen.getByText('HR is planned for a future release'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Prompt|Phase/i)).not.toBeInTheDocument();
   });
 });

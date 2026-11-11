@@ -401,7 +401,7 @@ export function InsightsPage() {
           { label: 'Workspace', to: '/dashboard' },
           { label: 'Insights' },
         ]}
-        badge={<Badge variant="success">Active · Prompts 06 & 07</Badge>}
+        badge={<Badge variant="success">Active</Badge>}
       />
 
       <div className="foundation-row" role="tablist" aria-label="Insights views" style={{ flexWrap: 'wrap' }}>

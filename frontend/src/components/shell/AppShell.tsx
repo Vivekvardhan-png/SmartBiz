@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { LogOut, Menu, Palette, X } from 'lucide-react';
+import { LogOut, Menu, X } from 'lucide-react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../app/authContext';
 import {
@@ -146,28 +146,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             );
           })}
-
-          <div>
-            <div className="app-nav-group__label">Foundation</div>
-            <ul className="app-nav-list">
-              <li>
-                <NavLink
-                  to="/design-system"
-                  className={({ isActive }) =>
-                    `app-nav-link ${isActive ? 'app-nav-link--active' : ''}`.trim()
-                  }
-                >
-                  <span className="app-nav-link__main">
-                    <Palette size={16} aria-hidden="true" />
-                    <span>Design System</span>
-                  </span>
-                  <Badge variant="info" size="sm">
-                    Phase 00
-                  </Badge>
-                </NavLink>
-              </li>
-            </ul>
-          </div>
         </nav>
 
         <div className="app-sidebar__footer">

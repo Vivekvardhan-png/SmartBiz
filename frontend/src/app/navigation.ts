@@ -19,7 +19,6 @@ export interface NavItem {
   icon: ComponentType<{ size?: number; className?: string }>;
   allowedRoles: readonly UserRole[];
   statusLabel: string;
-  targetPhase: string;
   description: string;
 }
 
@@ -39,7 +38,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: LayoutDashboard,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
     statusLabel: 'Active',
-    targetPhase: 'Prompt 03',
     description:
       'Executive overview for authorized organization metrics, pipeline activity, invoice balances, and low-stock alerts.',
   },
@@ -51,7 +49,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Users,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
     statusLabel: 'Active',
-    targetPhase: 'Prompt 03',
     description:
       'Lead pipeline, customer directory, follow-up tracking, and transactional lead-to-customer conversion.',
   },
@@ -63,7 +60,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Package,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE'],
     statusLabel: 'Active',
-    targetPhase: 'Prompt 04',
     description:
       'Product catalog, SKU management, suppliers, stock levels, and auditable inventory movements.',
   },
@@ -75,7 +71,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Receipt,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER'],
     statusLabel: 'Active',
-    targetPhase: 'Prompt 05',
     description:
       'Sales orders, invoice generation, payment recording, and reconciled outstanding balances.',
   },
@@ -87,9 +82,8 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Briefcase,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER'],
     statusLabel: 'Planned',
-    targetPhase: 'Scope Pending PRD',
     description:
-      'Human resources workspace placeholder reserved in the navigation architecture; workflows are not yet enabled.',
+      'Human resources, employee directory, and workforce management (planned for a future release).',
   },
   {
     id: 'insights',
@@ -99,7 +93,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: BarChart3,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER'],
     statusLabel: 'Active',
-    targetPhase: 'Prompts 06 & 07',
     description:
       'Organization-scoped business reporting, demand forecasting, and the permission-checked AI assistant.',
   },
@@ -111,7 +104,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     icon: Settings,
     allowedRoles: ['OWNER', 'ADMIN'],
     statusLabel: 'Active',
-    targetPhase: 'Prompt 02',
     description:
       'Organization onboarding, membership management, role permissions, and security configuration.',
   },

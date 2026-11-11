@@ -611,7 +611,7 @@ export function CrmPage() {
           { label: 'Workspace', to: '/dashboard' },
           { label: 'CRM' },
         ]}
-        badge={<Badge variant="success">Active · Prompt 03</Badge>}
+        badge={<Badge variant="success">Active</Badge>}
         actions={
           canWrite ? (
             activeTab === 'leads' ? (

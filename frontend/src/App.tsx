@@ -6,13 +6,12 @@ import { SkeletonText, ToastProvider } from './components/ui';
 import { AdministrationPage } from './pages/AdministrationPage';
 import { CrmPage } from './pages/CrmPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { DesignSystemPage } from './pages/DesignSystemPage';
 import { FinancePage } from './pages/FinancePage';
 import { InsightsPage } from './pages/InsightsPage';
 import { LoginPage } from './pages/LoginPage';
-import { ModuleFoundationPage } from './pages/ModuleFoundationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { OperationsPage } from './pages/OperationsPage';
+import { PlannedModulePage } from './pages/PlannedModulePage';
 import { RegisterPage } from './pages/RegisterPage';
 
 function ProtectedShellRoutes() {
@@ -52,12 +51,11 @@ function ProtectedShellRoutes() {
               ) : item.id === 'administration' ? (
                 <AdministrationPage />
               ) : (
-                <ModuleFoundationPage module={item} />
+                <PlannedModulePage module={item} />
               )
             }
           />
         ))}
-        <Route path="/design-system" element={<DesignSystemPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AppShell>

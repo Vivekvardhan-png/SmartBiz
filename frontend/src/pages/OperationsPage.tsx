@@ -596,7 +596,7 @@ export function OperationsPage() {
           { label: 'Workspace', to: '/dashboard' },
           { label: 'Operations' },
         ]}
-        badge={<Badge variant="success">Active · Prompt 04</Badge>}
+        badge={<Badge variant="success">Active</Badge>}
         actions={
           canWrite ? (
             activeTab === 'suppliers' ? (

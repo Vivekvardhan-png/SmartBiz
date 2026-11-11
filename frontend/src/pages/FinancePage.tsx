@@ -531,7 +531,7 @@ export function FinancePage() {
           { label: 'Workspace', to: '/dashboard' },
           { label: 'Finance' },
         ]}
-        badge={<Badge variant="success">Active · Prompt 05</Badge>}
+        badge={<Badge variant="success">Active</Badge>}
         actions={
           canWrite ? (
             <Button
