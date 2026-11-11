@@ -16,3 +16,4 @@ public enum Permission {
     INSIGHTS_READ,
     AI_USE
 }
+

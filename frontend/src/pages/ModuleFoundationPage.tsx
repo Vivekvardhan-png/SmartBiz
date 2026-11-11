@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layers, ShieldAlert } from 'lucide-react';
 import { isRouteAllowedForRole, type NavItem } from '../app/navigation';
-import { useRolePreview } from '../app/roleContext';
+import { useAuth } from '../app/authContext';
 import {
   Alert,
   Badge,
@@ -17,7 +17,8 @@ import {
 } from '../components/ui';
 
 export function ModuleFoundationPage({ module }: { module: NavItem }) {
-  const { role } = useRolePreview();
+  const { session } = useAuth();
+  const role = session?.activeOrganization.role ?? 'EMPLOYEE';
   const [previewStatus, setPreviewStatus] = useState<ScreenStatus>('empty');
   const allowed = isRouteAllowedForRole(module, role);
 

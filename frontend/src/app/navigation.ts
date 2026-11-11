@@ -110,7 +110,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     group: 'Governance',
     icon: Settings,
     allowedRoles: ['OWNER', 'ADMIN'],
-    statusLabel: 'Planned',
+    statusLabel: 'Active',
     targetPhase: 'Prompt 02',
     description:
       'Organization onboarding, membership management, role permissions, and security configuration.',

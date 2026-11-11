@@ -1,23 +1,24 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Menu, Palette, X } from 'lucide-react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Badge, Button } from '../ui';
+import { LogOut, Menu, Palette, X } from 'lucide-react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../app/authContext';
 import {
   getVisibleNavItems,
-  ROLE_OPTIONS,
   type NavItem,
-  type UserRole,
 } from '../../app/navigation';
-import { useRolePreview } from '../../app/roleContext';
+import { Badge, Button, useToast } from '../ui';
 
 const NAV_GROUPS: NavItem['group'][] = ['Workspace', 'Modules', 'Governance'];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { role, setRole } = useRolePreview();
+  const { session, logout, switchOrganization } = useAuth();
+  const { notify } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
+  const role = session?.activeOrganization.role ?? 'EMPLOYEE';
   const visibleItems = getVisibleNavItems(role);
 
   useEffect(() => {
@@ -39,6 +40,32 @@ export function AppShell({ children }: { children: ReactNode }) {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [drawerOpen]);
+
+  const handleOrgSwitch = async (nextOrgId: string) => {
+    if (!session || nextOrgId === session.activeOrganization.id) {
+      return;
+    }
+    try {
+      await switchOrganization(nextOrgId);
+      notify({
+        variant: 'info',
+        title: 'Organization switched',
+        description: 'Active tenant context updated.',
+      });
+    } catch (err) {
+      notify({
+        variant: 'error',
+        title: 'Organization switch failed',
+        description:
+          err instanceof Error ? err.message : 'Unable to switch organization.',
+      });
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="app-shell">
@@ -105,7 +132,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                             <Icon size={16} aria-hidden="true" />
                             <span>{item.label}</span>
                           </span>
-                          <Badge variant="neutral" size="sm">
+                          <Badge
+                            variant={item.statusLabel === 'Active' ? 'success' : 'neutral'}
+                            size="sm"
+                          >
                             {item.statusLabel}
                           </Badge>
                         </NavLink>
@@ -141,8 +171,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="app-sidebar__footer">
-          <Badge variant="warning" size="sm">
-            Auth Pending (Prompt 02)
+          <Badge variant="success" size="sm">
+            {session?.activeOrganization.role ?? 'AUTHENTICATED'}
           </Badge>
           <span
             style={{
@@ -150,8 +180,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               color: 'var(--color-text-secondary)',
             }}
           >
-            Role visibility is a UI shell preview only. Server-side tenant
-            isolation starts in Prompt 02.
+            {session?.user.displayName || session?.user.email} ·{' '}
+            {session?.activeOrganization.slug}
           </span>
         </div>
       </aside>
@@ -178,32 +208,43 @@ export function AppShell({ children }: { children: ReactNode }) {
                 color: 'var(--color-text-secondary)',
               }}
             >
-              Enterprise CRM + ERP Shell
+              {session?.activeOrganization.name ?? 'Enterprise CRM + ERP'}
             </span>
           </div>
 
           <div className="app-topbar__right">
-            <div className="app-role-switcher">
-              <label
-                htmlFor="shell-role-preview"
-                className="app-role-switcher__label"
-              >
-                Role visibility preview:
-              </label>
-              <select
-                id="shell-role-preview"
-                aria-label="Role visibility preview"
-                className="ui-select app-role-switcher__select"
-                value={role}
-                onChange={(event) => setRole(event.target.value as UserRole)}
-              >
-                {ROLE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {session && session.organizations.length > 0 ? (
+              <div className="app-role-switcher">
+                <label
+                  htmlFor="active-organization-select"
+                  className="app-role-switcher__label"
+                >
+                  Organization:
+                </label>
+                <select
+                  id="active-organization-select"
+                  aria-label="Active organization"
+                  className="ui-select app-role-switcher__select"
+                  value={session.activeOrganization.id}
+                  onChange={(event) => void handleOrgSwitch(event.target.value)}
+                >
+                  {session.organizations.map((org) => (
+                    <option key={org.id} value={org.id}>
+                      {org.name} ({org.role})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
+
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<LogOut size={15} aria-hidden="true" />}
+              onClick={() => void handleLogout()}
+            >
+              Sign out
+            </Button>
           </div>
         </header>
 

@@ -27,3 +27,4 @@ public interface AuthSessionRepository extends JpaRepository<AuthSession, UUID> 
             @Param("revokedAt") Instant revokedAt
     );
 }
+

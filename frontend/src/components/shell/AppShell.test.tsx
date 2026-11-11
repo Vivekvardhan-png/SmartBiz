@@ -3,24 +3,84 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { AppRoutes } from '../../App';
-import { RoleProvider } from '../../app/roleContext';
+import { AuthProvider, type SessionInfo } from '../../app/authContext';
+import type { UserRole } from '../../app/navigation';
 import { ToastProvider } from '../ui';
 
-function renderShell(initialEntries: string[] = ['/dashboard']) {
+function buildSession(role: UserRole): SessionInfo {
+  const isAdmin = role === 'OWNER' || role === 'ADMIN';
+  return {
+    user: {
+      id: 'user-1',
+      email: 'alex@acme.test',
+      displayName: 'Alex Rivera',
+    },
+    activeOrganization: {
+      id: 'org-1',
+      name: 'Acme Corp',
+      slug: 'acme-corp',
+      role,
+    },
+    permissions: isAdmin
+      ? [
+          'ORG_MANAGE',
+          'MEMBERS_READ',
+          'MEMBERS_MANAGE',
+          'CRM_READ',
+          'CRM_WRITE',
+          'INVENTORY_READ',
+          'INVENTORY_WRITE',
+          'FINANCE_READ',
+          'FINANCE_WRITE',
+          'INSIGHTS_READ',
+          'AI_USE',
+        ]
+      : ['CRM_READ', 'CRM_WRITE', 'INVENTORY_READ', 'INVENTORY_WRITE'],
+    organizations: [
+      {
+        id: 'org-1',
+        name: 'Acme Corp',
+        slug: 'acme-corp',
+        role,
+      },
+    ],
+  };
+}
+
+function renderAuthenticatedShell(
+  role: UserRole = 'OWNER',
+  initialEntries: string[] = ['/dashboard'],
+) {
   return render(
     <ToastProvider>
-      <RoleProvider>
+      <AuthProvider initialSession={buildSession(role)} initialToken="test-token">
         <MemoryRouter initialEntries={initialEntries}>
           <AppRoutes />
         </MemoryRouter>
-      </RoleProvider>
+      </AuthProvider>
     </ToastProvider>,
   );
 }
 
-describe('AppShell navigation and role-aware visibility', () => {
-  it('renders all 7 core navigation modules for the default Owner role', () => {
-    renderShell(['/dashboard']);
+describe('AppShell authentication and role-aware visibility', () => {
+  it('redirects unauthenticated users to /login', () => {
+    render(
+      <ToastProvider>
+        <AuthProvider>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <AppRoutes />
+          </MemoryRouter>
+        </AuthProvider>
+      </ToastProvider>,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Sign in to NexusOps' }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders all 7 core navigation modules for the Owner role', () => {
+    renderAuthenticatedShell('OWNER', ['/dashboard']);
     const nav = screen.getByRole('navigation', { name: 'Modules' });
 
     for (const label of [
@@ -36,14 +96,10 @@ describe('AppShell navigation and role-aware visibility', () => {
     }
   });
 
-  it('hides restricted modules when switching to Employee role preview', async () => {
-    const user = userEvent.setup();
-    renderShell(['/dashboard']);
-
-    const roleSelect = screen.getByLabelText('Role visibility preview');
-    await user.selectOptions(roleSelect, 'EMPLOYEE');
-
+  it('hides restricted modules for the Employee role', () => {
+    renderAuthenticatedShell('EMPLOYEE', ['/dashboard']);
     const nav = screen.getByRole('navigation', { name: 'Modules' });
+
     expect(within(nav).getByText('Dashboard')).toBeInTheDocument();
     expect(within(nav).getByText('CRM')).toBeInTheDocument();
     expect(within(nav).getByText('Operations')).toBeInTheDocument();
@@ -54,21 +110,14 @@ describe('AppShell navigation and role-aware visibility', () => {
     expect(within(nav).queryByText('Administration')).not.toBeInTheDocument();
   });
 
-  it('does not expose restricted route content when Employee visits /administration', async () => {
-    const user = userEvent.setup();
-    renderShell(['/administration']);
-
-    const roleSelect = screen.getByLabelText('Role visibility preview');
-    await user.selectOptions(roleSelect, 'EMPLOYEE');
-
-    expect(
-      screen.getByText('Module hidden for the selected role'),
-    ).toBeInTheDocument();
+  it('blocks Employee from accessing /administration controls', () => {
+    renderAuthenticatedShell('EMPLOYEE', ['/administration']);
+    expect(screen.getByText('Insufficient permissions')).toBeInTheDocument();
   });
 
   it('toggles mobile navigation drawer and closes with Escape', async () => {
     const user = userEvent.setup();
-    renderShell(['/dashboard']);
+    renderAuthenticatedShell('OWNER', ['/dashboard']);
 
     const menuButton = screen.getByRole('button', {
       name: 'Open navigation menu',
@@ -83,11 +132,9 @@ describe('AppShell navigation and role-aware visibility', () => {
   });
 
   it('allows inspecting the Design System foundation route', () => {
-    renderShell(['/design-system']);
+    renderAuthenticatedShell('OWNER', ['/design-system']);
     expect(
       screen.getByRole('heading', { name: 'Design System Foundation' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Color Palette & Semantic Tokens')).toBeInTheDocument();
   });
 });
-

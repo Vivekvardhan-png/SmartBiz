@@ -46,3 +46,4 @@ public enum OrganizationRole {
         return permissions.contains(permission);
     }
 }
+

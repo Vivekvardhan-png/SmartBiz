@@ -52,3 +52,4 @@ Additional role safety rules:
 - `CORS_ALLOWED_ORIGINS` — explicit comma-separated frontend origins
 - `JWT_SECRET` — high-entropy HMAC-SHA256 signing secret (minimum 32 bytes / 256 bits)
 - `JWT_EXPIRATION_SECONDS` — token/session TTL in seconds (default `3600`)
+

@@ -1,72 +1,72 @@
 package com.nexusops.platform.config;
 
+import com.nexusops.platform.security.JwtAuthenticationFilter;
+import com.nexusops.platform.security.RestAccessDeniedHandler;
+import com.nexusops.platform.security.RestAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
- * Spring Security foundation — Prompt 00/01 placeholder.
+ * Spring Security configuration for Prompt 02.
  *
- * <p>IMPORTANT: This is a permissive bootstrap configuration that allows the
- * API to be exercised without authentication while the backend foundation is
- * established. Full JWT/session-based multi-tenant authentication will replace
- * this in <strong>Prompt 02</strong>.
- *
- * <p>Until Prompt 02 is applied:
- * <ul>
- *   <li>The health and OpenAPI endpoints are explicitly public.</li>
- *   <li>All other API requests are permitted (no auth check) so the
- *       frontend integration endpoint in this phase is reachable.</li>
- *   <li>CSRF is disabled because there are no session cookies yet.</li>
- * </ul>
- *
- * <p>Do <em>not</em> use this configuration in any environment that handles
- * real business data until Prompt 02 is complete.
+ * <p>Uses stateless Bearer JWT authentication backed by revocable database sessions
+ * in {@code auth_sessions} and BCrypt (cost 12) password hashing.
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   @Qualifier("corsConfigurationSource") CorsConfigurationSource corsSource)
-            throws Exception {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            @Qualifier("corsConfigurationSource") CorsConfigurationSource corsSource,
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            RestAuthenticationEntryPoint authenticationEntryPoint,
+            RestAccessDeniedHandler accessDeniedHandler) throws Exception {
 
         http
-            // Apply our explicit CORS allowlist — not a wildcard.
             .cors(cors -> cors.configurationSource(corsSource))
-
-            // CSRF disabled: no browser session cookies in Phase 00/01.
-            // Will be re-evaluated in Prompt 02 based on selected auth approach.
+            // Stateless Bearer token auth in Authorization header (not cookie-based).
             .csrf(AbstractHttpConfigurer::disable)
-
-            // Stateless for now; will be revisited in Prompt 02.
             .sessionManagement(sm ->
                     sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler))
             .authorizeHttpRequests(auth -> auth
-                    // Health and readiness probes — always public.
+                    // Health and readiness probes
                     .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
-
-                    // OpenAPI docs — dev environment only.
+                    // OpenAPI docs
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
-                    // Preflight — browsers send OPTIONS before credentialed requests.
+                    // Connectivity probe
+                    .requestMatchers(HttpMethod.GET, "/api/v1/ping").permitAll()
+                    // Public authentication onboarding & login endpoints
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                    // CORS preflight
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                    // === TEMPORARY: permit all API traffic until Prompt 02 auth ===
-                    // Replace this rule with authenticated-only access in Prompt 02.
-                    .anyRequest().permitAll()
-            );
+                    // All remaining endpoints require validated identity & organization session
+                    .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 }
-

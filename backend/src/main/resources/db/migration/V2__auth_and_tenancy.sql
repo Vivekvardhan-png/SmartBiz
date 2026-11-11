@@ -35,3 +35,4 @@ CREATE INDEX idx_auth_sessions_org        ON auth_sessions (organization_id);
 CREATE INDEX idx_auth_sessions_expires_at ON auth_sessions (expires_at);
 
 COMMENT ON TABLE auth_sessions IS 'Active and revoked authentication sessions bound to verified organization memberships.';
+

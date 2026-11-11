@@ -80,3 +80,4 @@ public class Organization {
         return updatedAt;
     }
 }
+

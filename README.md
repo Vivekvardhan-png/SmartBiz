@@ -5,10 +5,11 @@ AI-integrated, cloud-based CRM and ERP management platform for small and medium 
 ## Current Phase Status
 
 - **Phase 00 (Completed):** Repository audit, centralized design tokens, shared UI primitives, and responsive role-aware application shell in `frontend/`.
-- **Phase 01 (Completed - Pending Local PostgreSQL Verification):** Spring Boot modular monolith backend foundation in `backend/` with environment-based PostgreSQL config, Flyway `V1__init_schema.sql`, validation & centralized error handling, health/readiness endpoints, explicit CORS, OpenAPI docs, and Maven Wrapper (`mvnw.cmd`).
-- **Phases 02–08 (Upcoming):** Authentication & multi-tenant isolation, Dashboard & CRM, Inventory & Suppliers, Sales & Finance, Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
+- **Phase 01 (Completed & Verified against PostgreSQL 18):** Spring Boot modular monolith backend foundation in `backend/` with environment-based PostgreSQL config, Flyway migrations, validation & centralized error handling, health/readiness endpoints, explicit CORS, OpenAPI docs, and Maven Wrapper (`mvnw.cmd`).
+- **Phase 02 (Completed):** Spring Security Bearer JWT authentication + revocable PostgreSQL `auth_sessions`, BCrypt password hashing, organization onboarding, multi-tenant isolation (`TenantPrincipal`/`TenantContext`), role/permission checks, and React login/register/administration UI in `frontend/`.
+- **Phases 03–08 (Upcoming):** Dashboard & CRM, Inventory & Suppliers, Sales & Finance, Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
 
-See `BUILD_PROMPTS.md` for the phased implementation roadmap.
+See `BUILD_PROMPTS.md` for the phased implementation roadmap and `docs/architecture/auth-and-tenancy.md` for the security architecture.
 
 ## Repository Structure
 
@@ -70,7 +71,7 @@ Prerequisites:
 ```powershell
 cd backend
 Copy-Item .env.example .env
-# Edit .env with your PostgreSQL DB_URL, DB_USERNAME, DB_PASSWORD, and CORS_ALLOWED_ORIGINS
+# Edit .env with your PostgreSQL DB_URL, DB_USERNAME, DB_PASSWORD, CORS_ALLOWED_ORIGINS, JWT_SECRET, and JWT_EXPIRATION_SECONDS
 ```
 
 2. Run backend unit & slice tests (uses H2 in-memory; does not require PostgreSQL):

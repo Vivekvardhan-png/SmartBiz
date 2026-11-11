@@ -1,10 +1,17 @@
 package com.nexusops.platform.common.exception;
 
+import com.nexusops.platform.config.SecurityConfig;
+import com.nexusops.platform.security.JwtAuthenticationFilter;
+import com.nexusops.platform.security.RestAccessDeniedHandler;
+import com.nexusops.platform.security.RestAuthenticationEntryPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
@@ -35,8 +42,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *    by the security filter chain before reaching the DispatcherServlet.
  *  - Faster than @SpringBootTest — no JPA, Flyway, or DataSource required.
  */
-@WebMvcTest(excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@Import(GlobalExceptionHandlerTest.TestExceptionController.class)
+@WebMvcTest(
+        controllers = GlobalExceptionHandlerTest.TestExceptionController.class,
+        excludeAutoConfiguration = {
+                SecurityAutoConfiguration.class,
+                SecurityFilterAutoConfiguration.class
+        },
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = {
+                        SecurityConfig.class,
+                        JwtAuthenticationFilter.class,
+                        RestAuthenticationEntryPoint.class,
+                        RestAccessDeniedHandler.class
+                }
+        )
+)
+@Import({
+        GlobalExceptionHandlerTest.TestExceptionController.class,
+        GlobalExceptionHandler.class
+})
 @TestPropertySource(properties = {
         // Allow NoHandlerFoundException to propagate so our handler can map it.
         "spring.mvc.throw-exception-if-no-handler-found=true",

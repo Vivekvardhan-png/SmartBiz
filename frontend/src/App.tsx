@@ -1,13 +1,30 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider, useAuth } from './app/authContext';
 import { NAVIGATION_ITEMS } from './app/navigation';
-import { RoleProvider } from './app/roleContext';
 import { AppShell } from './components/shell/AppShell';
-import { ToastProvider } from './components/ui';
+import { SkeletonText, ToastProvider } from './components/ui';
+import { AdministrationPage } from './pages/AdministrationPage';
 import { DesignSystemPage } from './pages/DesignSystemPage';
+import { LoginPage } from './pages/LoginPage';
 import { ModuleFoundationPage } from './pages/ModuleFoundationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { RegisterPage } from './pages/RegisterPage';
 
-export function AppRoutes() {
+function ProtectedShellRoutes() {
+  const { status } = useAuth();
+
+  if (status === 'loading') {
+    return (
+      <div style={{ maxWidth: '40rem', margin: '4rem auto', padding: '0 1rem' }}>
+        <SkeletonText lines={4} />
+      </div>
+    );
+  }
+
+  if (status !== 'authenticated') {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <AppShell>
       <Routes>
@@ -16,7 +33,13 @@ export function AppRoutes() {
           <Route
             key={item.id}
             path={item.path}
-            element={<ModuleFoundationPage module={item} />}
+            element={
+              item.id === 'administration' ? (
+                <AdministrationPage />
+              ) : (
+                <ModuleFoundationPage module={item} />
+              )
+            }
           />
         ))}
         <Route path="/design-system" element={<DesignSystemPage />} />
@@ -26,17 +49,26 @@ export function AppRoutes() {
   );
 }
 
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/*" element={<ProtectedShellRoutes />} />
+    </Routes>
+  );
+}
+
 export function App() {
   return (
     <ToastProvider>
-      <RoleProvider>
+      <AuthProvider>
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
-      </RoleProvider>
+      </AuthProvider>
     </ToastProvider>
   );
 }
 
 export default App;
-

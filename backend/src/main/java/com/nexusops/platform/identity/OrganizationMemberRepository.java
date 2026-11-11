@@ -51,3 +51,4 @@ public interface OrganizationMemberRepository extends JpaRepository<Organization
 
     long countByOrganizationIdAndRole(UUID organizationId, OrganizationRole role);
 }
+
