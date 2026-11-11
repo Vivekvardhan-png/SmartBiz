@@ -290,7 +290,7 @@ export function DashboardPage() {
                         summary.periodRevenue.moduleAvailable ? 'success' : 'neutral'
                       }
                     >
-                      {summary.periodRevenue.moduleAvailable ? 'Live' : 'Prompt 05'}
+                      {summary.periodRevenue.moduleAvailable ? 'Live' : 'Restricted'}
                     </Badge>
                   }
                 />
@@ -301,7 +301,9 @@ export function DashboardPage() {
                       fontWeight: 'var(--weight-bold)',
                     }}
                   >
-                    ${Number(summary.periodRevenue.value).toFixed(2)}
+                    {summary.periodRevenue.moduleAvailable && summary.periodRevenue.value != null
+                      ? `$${Number(summary.periodRevenue.value).toFixed(2)}`
+                      : '—'}
                   </div>
                   <p
                     style={{
@@ -330,7 +332,7 @@ export function DashboardPage() {
                     >
                       {summary.outstandingInvoiceBalance.moduleAvailable
                         ? 'Live'
-                        : 'Prompt 05'}
+                        : 'Restricted'}
                     </Badge>
                   }
                 />
@@ -341,7 +343,10 @@ export function DashboardPage() {
                       fontWeight: 'var(--weight-bold)',
                     }}
                   >
-                    ${Number(summary.outstandingInvoiceBalance.value).toFixed(2)}
+                    {summary.outstandingInvoiceBalance.moduleAvailable &&
+                    summary.outstandingInvoiceBalance.value != null
+                      ? `$${Number(summary.outstandingInvoiceBalance.value).toFixed(2)}`
+                      : '—'}
                   </div>
                   <p
                     style={{
@@ -370,7 +375,7 @@ export function DashboardPage() {
                     >
                       {summary.salesOrdersByStatus.moduleAvailable
                         ? 'Live'
-                        : 'Prompt 05'}
+                        : 'Restricted'}
                     </Badge>
                   }
                 />
@@ -392,7 +397,7 @@ export function DashboardPage() {
                         fontWeight: 'var(--weight-bold)',
                       }}
                     >
-                      {Object.keys(summary.salesOrdersByStatus.value).length}
+                      —
                     </div>
                   )}
                   <p

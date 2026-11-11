@@ -10,6 +10,7 @@ import com.nexusops.platform.dashboard.dto.DashboardSummaryResponse.MetricDefini
 import com.nexusops.platform.finance.InvoiceRepository;
 import com.nexusops.platform.finance.SalesOrderRepository;
 import com.nexusops.platform.finance.SalesOrderStatus;
+import com.nexusops.platform.identity.Permission;
 import com.nexusops.platform.inventory.ProductRepository;
 import com.nexusops.platform.security.TenantPrincipal;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,9 @@ public class DashboardService {
         long totalCustomers = customerRepository.countByOrganizationId(orgId);
         long openLeads = leadRepository.countByOrganizationIdAndStatusIn(
                 orgId, LeadStatus.OPEN_STATUSES);
-        long lowStockProductsCount = productRepository.countLowStockProducts(orgId);
+
+        boolean canViewInventory = principal.hasPermission(Permission.INVENTORY_READ);
+        long lowStockProductsCount = canViewInventory ? productRepository.countLowStockProducts(orgId) : 0L;
 
         Map<LeadStatus, Long> leadsByStage = new EnumMap<>(LeadStatus.class);
         for (LeadStatus status : LeadStatus.values()) {
@@ -80,21 +83,26 @@ public class DashboardService {
             leadsByStage.put(row.getStatus(), row.getTotal());
         }
 
+        boolean canViewFinance = principal.hasPermission(Permission.FINANCE_READ);
         Map<String, Long> ordersByStatus = new LinkedHashMap<>();
-        for (SalesOrderStatus status : SalesOrderStatus.values()) {
-            ordersByStatus.put(status.name(), 0L);
-        }
-        for (SalesOrderRepository.OrderStatusCount row
-                : salesOrderRepository.countByStatusInDateRange(orgId, periodStart, periodEnd)) {
-            ordersByStatus.put(row.getStatus().name(), row.getTotal());
-        }
+        BigDecimal periodRevenue = null;
+        BigDecimal outstandingBalance = null;
+        if (canViewFinance) {
+            for (SalesOrderStatus status : SalesOrderStatus.values()) {
+                ordersByStatus.put(status.name(), 0L);
+            }
+            for (SalesOrderRepository.OrderStatusCount row
+                    : salesOrderRepository.countByStatusInDateRange(orgId, periodStart, periodEnd)) {
+                ordersByStatus.put(row.getStatus().name(), row.getTotal());
+            }
 
-        BigDecimal periodRevenue = invoiceRepository
-                .sumRevenueInDateRange(orgId, periodStart, periodEnd)
-                .setScale(2, RoundingMode.HALF_UP);
-        BigDecimal outstandingBalance = invoiceRepository
-                .sumOutstandingBalance(orgId)
-                .setScale(2, RoundingMode.HALF_UP);
+            periodRevenue = invoiceRepository
+                    .sumRevenueInDateRange(orgId, periodStart, periodEnd)
+                    .setScale(2, RoundingMode.HALF_UP);
+            outstandingBalance = invoiceRepository
+                    .sumOutstandingBalance(orgId)
+                    .setScale(2, RoundingMode.HALF_UP);
+        }
 
         return new DashboardSummaryResponse(
                 periodStart,
@@ -104,23 +112,31 @@ public class DashboardService {
                 leadsByStage,
                 new DeferredMetric<>(
                         ordersByStatus,
-                        true,
-                        "Sales orders grouped by status within selected UTC period."
+                        canViewFinance,
+                        canViewFinance
+                                ? "Sales orders grouped by status within selected UTC period."
+                                : "Requires FINANCE_READ permission."
                 ),
                 new DeferredMetric<>(
                         periodRevenue,
-                        true,
-                        "Sum of non-voided, non-refunded invoice totals issued in selected UTC period."
+                        canViewFinance,
+                        canViewFinance
+                                ? "Sum of non-voided, non-refunded invoice totals issued in selected UTC period."
+                                : "Requires FINANCE_READ permission."
                 ),
                 new DeferredMetric<>(
                         outstandingBalance,
-                        true,
-                        "Total remaining balance across ISSUED and PARTIALLY_PAID invoices."
+                        canViewFinance,
+                        canViewFinance
+                                ? "Total remaining balance across ISSUED and PARTIALLY_PAID invoices."
+                                : "Requires FINANCE_READ permission."
                 ),
                 new DeferredMetric<>(
                         lowStockProductsCount,
-                        true,
-                        "Active products with stock quantity at or below threshold."
+                        canViewInventory,
+                        canViewInventory
+                                ? "Active products with stock quantity at or below threshold."
+                                : "Requires INVENTORY_READ permission."
                 ),
                 buildDefinitions()
         );
