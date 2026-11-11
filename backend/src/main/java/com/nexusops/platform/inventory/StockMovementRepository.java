@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -70,5 +72,58 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, UU
     BigDecimal sumQuantityDeltaByOrganizationIdAndProductId(
             @Param("organizationId") UUID organizationId,
             @Param("productId") UUID productId
+    );
+
+    @Query(
+            value = """
+                    SELECT m FROM StockMovement m
+                    JOIN FETCH m.product p
+                    LEFT JOIN FETCH m.supplier s
+                    WHERE m.organizationId = :organizationId
+                      AND m.createdAt >= :fromInstant
+                      AND m.createdAt < :toExclusive
+                    ORDER BY m.createdAt DESC
+                    """,
+            countQuery = """
+                    SELECT COUNT(m) FROM StockMovement m
+                    WHERE m.organizationId = :organizationId
+                      AND m.createdAt >= :fromInstant
+                      AND m.createdAt < :toExclusive
+                    """
+    )
+    Page<StockMovement> findPageByOrganizationAndCreatedRange(
+            @Param("organizationId") UUID organizationId,
+            @Param("fromInstant") Instant fromInstant,
+            @Param("toExclusive") Instant toExclusive,
+            Pageable pageable
+    );
+
+    @Query("""
+            SELECT m FROM StockMovement m
+            JOIN FETCH m.product p
+            LEFT JOIN FETCH m.supplier s
+            WHERE m.organizationId = :organizationId
+              AND m.createdAt >= :fromInstant
+              AND m.createdAt < :toExclusive
+            ORDER BY m.createdAt DESC
+            """)
+    List<StockMovement> findAllByOrganizationAndCreatedRange(
+            @Param("organizationId") UUID organizationId,
+            @Param("fromInstant") Instant fromInstant,
+            @Param("toExclusive") Instant toExclusive
+    );
+
+    @Query("""
+            SELECT m FROM StockMovement m
+            WHERE m.organizationId = :organizationId
+              AND m.product.id = :productId
+              AND m.movementType = 'ORDER_DEDUCTION'
+              AND m.createdAt >= :fromInstant
+            ORDER BY m.createdAt ASC
+            """)
+    List<StockMovement> findOrderDeductionsSince(
+            @Param("organizationId") UUID organizationId,
+            @Param("productId") UUID productId,
+            @Param("fromInstant") Instant fromInstant
     );
 }

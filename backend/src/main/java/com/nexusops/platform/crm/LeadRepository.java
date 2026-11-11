@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,9 @@ public interface LeadRepository
     long countByOrganizationIdAndStatusIn(UUID organizationId, Collection<LeadStatus> statuses);
 
     @Query("""
-            SELECT l.status AS status, COUNT(l.id) AS total
+            SELECT l.status AS status,
+                   COUNT(l.id) AS total,
+                   COALESCE(SUM(l.estimatedValue), 0) AS totalValue
             FROM Lead l
             WHERE l.organizationId = :organizationId
             GROUP BY l.status
@@ -37,6 +40,7 @@ public interface LeadRepository
     interface LeadStageCount {
         LeadStatus getStatus();
         long getTotal();
+        BigDecimal getTotalValue();
     }
 }
 

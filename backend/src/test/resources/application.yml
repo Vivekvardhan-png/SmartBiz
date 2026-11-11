@@ -29,6 +29,14 @@ security:
     secret: "test-only-signing-secret-not-for-production-use-64-bytes-minimum!!"
     expiration-seconds: 3600
 
+forecasting:
+  service:
+    enabled: false
+    base-url: http://localhost:8001
+    api-key: test-internal-key
+    connect-timeout-ms: 1000
+    read-timeout-ms: 2000
+
 logging:
   level:
     com.nexusops: WARN

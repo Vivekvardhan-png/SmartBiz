@@ -98,7 +98,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     group: 'Modules',
     icon: BarChart3,
     allowedRoles: ['OWNER', 'ADMIN', 'MANAGER'],
-    statusLabel: 'Planned',
+    statusLabel: 'Active',
     targetPhase: 'Prompts 06 & 07',
     description:
       'Organization-scoped business reporting, demand forecasting, and the permission-checked AI assistant.',

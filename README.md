@@ -10,7 +10,8 @@ AI-integrated, cloud-based CRM and ERP management platform for small and medium 
 - **Phase 03 (Completed):** Organization-scoped Dashboard metrics (`/api/v1/dashboard/summary`) and CRM Lead/Customer pipeline, search/filter/pagination, follow-up notes, and idempotent lead-to-customer conversion (`V3__crm_module.sql`) with connected React UI (`DashboardPage`, `CrmPage`).
 - **Phase 04 (Completed):** Organization-scoped Inventory & Suppliers (`V4__inventory_module.sql`): products, SKUs, suppliers, supplier-product links, pessimistic-locked & idempotent stock movements, movement audit history, low-stock dashboard integration, and React `OperationsPage`.
 - **Phase 05 (Completed):** Sales Orders, Invoices & Payments (`V5__sales_and_finance.sql`): backend `BigDecimal` pricing/discount/tax math, atomic stock deductions/restorations, sequential idempotent invoice generation, append-only payment & refund ledger, live dashboard revenue/order/balance metrics, and React `FinancePage`.
-- **Phases 06–08 (Upcoming):** Reporting & Forecasting, AI Assistant & Automation, and Release Hardening.
+- **Phase 06 (Completed):** Business Reports & Forecasting: 6 organization-scoped reports, formula-safe CSV exports (`CsvSanitizer`), Python + pandas + scikit-learn forecasting service (`forecasting/`) with holdout MAE/WAPE evaluation and graceful fallback when unavailable, and React `InsightsPage`.
+- **Phases 07–08 (Upcoming):** AI Assistant & Automation, and Release Hardening.
 
 See `BUILD_PROMPTS.md` for the phased implementation roadmap and `docs/architecture/auth-and-tenancy.md` for the security architecture.
 

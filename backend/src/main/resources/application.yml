@@ -114,6 +114,17 @@ security:
     expiration-seconds: ${JWT_EXPIRATION_SECONDS:3600}
 
 # ============================================================
+# Forecasting Internal Service (Optional Python microservice)
+# ============================================================
+forecasting:
+  service:
+    enabled: ${FORECASTING_ENABLED:false}
+    base-url: ${FORECASTING_URL:http://localhost:8001}
+    api-key: ${FORECASTING_API_KEY:}
+    connect-timeout-ms: ${FORECASTING_CONNECT_TIMEOUT_MS:2000}
+    read-timeout-ms: ${FORECASTING_READ_TIMEOUT_MS:5000}
+
+# ============================================================
 # Logging
 # - Log structured INFO in production; DEBUG in local.
 # - Never log passwords, tokens, or sensitive business data.

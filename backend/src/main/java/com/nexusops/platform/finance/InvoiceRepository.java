@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -65,5 +66,37 @@ public interface InvoiceRepository
               AND i.status IN ('ISSUED', 'PARTIALLY_PAID')
             """)
     BigDecimal sumOutstandingBalance(@Param("organizationId") UUID organizationId);
+
+    @Query("""
+            SELECT i.issueDate AS issueDate,
+                   COALESCE(SUM(i.totalAmount), 0) AS revenue,
+                   COUNT(i.id) AS invoiceCount
+            FROM Invoice i
+            WHERE i.organizationId = :organizationId
+              AND i.status IN ('ISSUED', 'PARTIALLY_PAID', 'PAID')
+              AND i.issueDate >= :fromDate
+              AND i.issueDate <= :toDate
+            GROUP BY i.issueDate
+            ORDER BY i.issueDate ASC
+            """)
+    List<DailyRevenueRow> findDailyRevenueInDateRange(
+            @Param("organizationId") UUID organizationId,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate
+    );
+
+    @Query("""
+            SELECT i FROM Invoice i
+            WHERE i.organizationId = :organizationId
+              AND i.status IN ('ISSUED', 'PARTIALLY_PAID')
+            ORDER BY i.issueDate DESC, i.createdAt DESC
+            """)
+    List<Invoice> findOutstandingInvoices(@Param("organizationId") UUID organizationId);
+
+    interface DailyRevenueRow {
+        LocalDate getIssueDate();
+        BigDecimal getRevenue();
+        long getInvoiceCount();
+    }
 }
 

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,12 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     List<Payment> findAllByOrganizationIdAndInvoiceIdOrderByCreatedAtDesc(
             UUID organizationId,
             UUID invoiceId
+    );
+
+    List<Payment> findAllByOrganizationIdAndPaymentDateBetweenOrderByPaymentDateDescCreatedAtDesc(
+            UUID organizationId,
+            LocalDate fromDate,
+            LocalDate toDate
     );
 
     Optional<Payment> findByOrganizationIdAndIdempotencyKey(

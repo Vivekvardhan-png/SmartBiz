@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,9 @@ public interface SalesOrderRepository
     long countByOrganizationId(UUID organizationId);
 
     @Query("""
-            SELECT o.status AS status, COUNT(o.id) AS total
+            SELECT o.status AS status,
+                   COUNT(o.id) AS total,
+                   COALESCE(SUM(o.totalAmount), 0) AS totalAmount
             FROM SalesOrder o
             WHERE o.organizationId = :organizationId
               AND o.orderDate >= :fromDate
@@ -53,6 +56,7 @@ public interface SalesOrderRepository
     interface OrderStatusCount {
         SalesOrderStatus getStatus();
         long getTotal();
+        BigDecimal getTotalAmount();
     }
 }
 

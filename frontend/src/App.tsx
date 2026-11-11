@@ -8,6 +8,7 @@ import { CrmPage } from './pages/CrmPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { DesignSystemPage } from './pages/DesignSystemPage';
 import { FinancePage } from './pages/FinancePage';
+import { InsightsPage } from './pages/InsightsPage';
 import { LoginPage } from './pages/LoginPage';
 import { ModuleFoundationPage } from './pages/ModuleFoundationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -46,6 +47,8 @@ function ProtectedShellRoutes() {
                 <OperationsPage />
               ) : item.id === 'finance' ? (
                 <FinancePage />
+              ) : item.id === 'insights' ? (
+                <InsightsPage />
               ) : item.id === 'administration' ? (
                 <AdministrationPage />
               ) : (
