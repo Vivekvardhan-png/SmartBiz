@@ -1,0 +1,18 @@
+# Local developer overrides — do not commit a filled .env or these values.
+# Copy this to application-local.yml and fill in real values, or export
+# the environment variables directly in your shell.
+#
+# Start the backend with the local profile:
+#   ./mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
+
+spring:
+  config:
+    import: optional:file:./.env[.properties]
+
+logging:
+  level:
+    com.nexusops: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+

@@ -1,0 +1,120 @@
+spring:
+  application:
+    name: NexusOps Platform
+
+  # ============================================================
+  # Data Source — PostgreSQL
+  # All credentials sourced from environment variables.
+  # Never hardcode credentials here. See .env.example.
+  # ============================================================
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: NexusOpsHikari
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      # Verify connections before handing them to the application.
+      connection-test-query: SELECT 1
+
+  # ============================================================
+  # JPA / Hibernate
+  # Schema management is owned by Flyway. Hibernate only validates.
+  # ============================================================
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: public
+        # Use a consistent naming strategy matching SQL conventions.
+        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        # Log slow queries server-side (not to the client).
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 500
+    open-in-view: false
+  # ============================================================
+  # Flyway — Database Migrations
+  # ============================================================
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+    out-of-order: false
+    validate-on-migrate: true
+    # Schema history table prefix makes it identifiable alongside app tables.
+    table: flyway_schema_history
+
+# ============================================================
+# Spring Boot Actuator — Health & Readiness Probes
+# Sensitive details (db credentials, env, heap) are NOT exposed.
+# ============================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    defaults:
+      enabled: true
+
+# ============================================================
+# Server
+# ============================================================
+server:
+  port: 8080
+  error:
+    # Never expose stack traces or whitelabel error pages to clients.
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+    whitelabel:
+      enabled: false
+
+# ============================================================
+# SpringDoc / Swagger UI — available in local dev only.
+# Restrict or disable in production via profile override.
+# ============================================================
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+  show-actuator: false
+
+# ============================================================
+# CORS — explicit origin allowlist from environment.
+# ============================================================
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
+# ============================================================
+# Security / JWT — secret must come from environment.
+# ============================================================
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-seconds: ${JWT_EXPIRATION_SECONDS:3600}
+
+# ============================================================
+# Logging
+# - Log structured INFO in production; DEBUG in local.
+# - Never log passwords, tokens, or sensitive business data.
+# =======================================================
